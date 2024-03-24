@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   IconButton,
   Modal,
   OutlinedInput,
@@ -26,49 +25,42 @@ import {
   getLastTime,
   showWalletUI,
 } from "../actions/auth";
+import useCustomClass from "../class/useCustomClasses";
 import { getProvider } from "../utils/phantom";
 import { getAddress16 } from "../utils/address";
 
-
-
-const ethers = require("ethers");
-const MainLayout = ({ }) => {
+const MainLayout = ({}) => {
   const theme = useTheme();
   const [popOpen, setPopOpen] = useState(false);
   const anchor = useRef(null);
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
-  const provider = useSelector((state) => state.provider.provider)
+  const provider = useSelector((state) => state.provider.provider);
 
-  const [magicWalletPopup, setMagicWalletPopup] = useState(false)
+  const [magicWalletPopup, setMagicWalletPopup] = useState(false);
 
-  const [email, setEmail] = useState("")
-  const [isPhantomInstalled, setIsPhantomInstalled] = useState(null)
-
+  const [email, setEmail] = useState("");
+  const [isPhantomInstalled, setIsPhantomInstalled] = useState(null);
+  const classes = useCustomClass();
   useEffect(() => {
     const provider = getProvider();
     if (provider) {
-      setIsPhantomInstalled(true)
+      setIsPhantomInstalled(true);
+    } else {
+      setIsPhantomInstalled(false);
     }
-    else {
-      setIsPhantomInstalled(false)
-    }
-  }, [])
-
+  }, []);
 
   useEffect(() => {
     if (auth.isAuthenticated) {
-      dispatch(getLastTime(provider, auth.walletAddress))
-    }
-    else {
+      dispatch(getLastTime(provider, auth.walletAddress));
+    } else {
       if (isPhantomInstalled) {
-      }
-      else {
-        dispatch(checkMagicLogged())
+      } else {
+        dispatch(checkMagicLogged());
       }
     }
   }, [auth.isAuthenticated, isPhantomInstalled, dispatch, provider]);
-
 
   return (
     <>
@@ -86,9 +78,12 @@ const MainLayout = ({ }) => {
           },
         }}
       >
-
-
-        <Stack flexDirection={"row"} alignItems={"space-between"} gap={6}>
+        <Stack
+          flexDirection={"row"}
+          justifyContent={"space-between"}
+          alignItems={"space-between"}
+          gap={6}
+        >
           {auth.isAuthenticated === true ? (
             <Stack flexDirection={"row"} alignItems={"center"} gap={2}>
               <IconButton
@@ -101,27 +96,6 @@ const MainLayout = ({ }) => {
                   style={{ color: "white" }}
                 />
               </IconButton>
-              <Stack
-                sx={{
-                  color: "white",
-                  fontFamily: "Roboto",
-                  "&:hover": {
-                    cursor: "pointer",
-                  },
-                }}
-                flexDirection={"row"}
-                alignItems={"center"}
-                gap={0.5}
-                onClick={() => {
-                  unsecuredCopyToClipboard(auth.walletAddress);
-                }}
-              >
-                {getAddress16(auth.walletAddress)}
-                {
-                  auth.email && <Box mx={1}>{auth.email}</Box>
-                }
-
-              </Stack>
               <IconButton
                 onClick={() => {
                   setPopOpen(true);
@@ -159,6 +133,50 @@ const MainLayout = ({ }) => {
                   </Button>
                 </Stack>
               </Popover>
+              <Stack
+                sx={{
+                  color: "white",
+                  fontFamily: "Roboto",
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
+                flexDirection={"row"}
+                alignItems={"center"}
+                gap={0.5}
+                onClick={() => {
+                  unsecuredCopyToClipboard(auth.walletAddress);
+                }}
+              >
+                {getAddress16(auth.walletAddress)}
+                {auth.email && <Box mx={1}>{auth.email}</Box>}
+                <Stack
+                  sx={{
+                    color: "white",
+                  }}
+                  flexDirection={"row"}
+                  gap={2}
+                  mx={2}
+                >
+                  <Box>LastTime:</Box>
+                  {auth.lastTime && (
+                    <Box mx={1}>
+                      {new Date(Number(auth.lastTime) * 1000).toLocaleString()}
+                    </Box>
+                  )}
+                </Stack>
+                <Stack>
+                  <Button
+                    sx={classes.button}
+                    variant="outlined"
+                    onClick={() => {
+                      dispatch(checkEntry(provider, auth.walletAddress));
+                    }}
+                  >
+                    Update
+                  </Button>
+                </Stack>
+              </Stack>
             </Stack>
           ) : (
             <Button
@@ -171,61 +189,58 @@ const MainLayout = ({ }) => {
                 },
               }}
               onClick={() => {
-                const provider = getProvider()
-                if (provider)
-                  dispatch(connectPhantom());
+                const provider = getProvider();
+                if (provider) dispatch(connectPhantom());
                 else {
-                  setMagicWalletPopup(true)
+                  setMagicWalletPopup(true);
                 }
               }}
             >
               Connect Wallet
             </Button>
           )}
-
-
         </Stack>
-        <Stack sx={{
-          color: "white"
-        }}>
-          <Box>LastTime:</Box>
-          {
 
-          }
-          {
-            auth.lastTime && <Box mx={1}>{new Date(Number(auth.lastTime) * 1000).toLocaleString()}</Box>
-          }
-        </Stack>
-        <Stack>
-          <Button onClick={() => {
-            dispatch(checkEntry(provider, auth.walletAddress))
-          }}>Update</Button>
-
-        </Stack >
-        <Modal open={magicWalletPopup && !auth.isAuthenticated} onClose={() => {
-          setMagicWalletPopup(false)
-        }}>
-          <Box sx={{
-            padding: "20px",
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%,-50%)",
-            backgroundColor: "white",
-            flexDirection: "column",
-            display: "flex",
-            gap: 2,
-            minWidth: "500px"
-          }}>
-            <Typography fontSize={"30px"}>Please signup or login</Typography>
-            <OutlinedInput value={email} onChange={(e) => {
-              setEmail(e.target.value)
-            }} />
-            <Button onClick={() => { dispatch(connectWallet(email)) }}> Send </Button>
+        <Modal
+          open={magicWalletPopup && !auth.isAuthenticated}
+          onClose={() => {
+            setMagicWalletPopup(false);
+          }}
+        >
+          <Box
+            sx={{
+              ...classes.subContainer,
+              padding: "20px",
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%,-50%)",
+              backgroundColor: "white",
+              flexDirection: "column",
+              display: "flex",
+              gap: 2,
+              minWidth: "500px",
+              textAlign: "center",
+            }}
+          >
+            <Typography fontSize={"30px"}>Please Signup or Login</Typography>
+            <OutlinedInput
+              value={email}
+              placeholder="Input your email"
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+            />
+            <Button
+              onClick={() => {
+                dispatch(connectWallet(email));
+              }}
+            >
+              Send
+            </Button>
           </Box>
         </Modal>
-      </Stack >
-
+      </Stack>
     </>
   );
 };

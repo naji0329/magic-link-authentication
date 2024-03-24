@@ -6,8 +6,9 @@ const defaultClasses = {
   title2: {},
   title3: {},
   title4: {},
-  textGreen: {},  button: {},
-  container: {},  
+  textGreen: {},
+  button: {},
+  container: {},
   subContainer: {},
 };
 const useCustomClass = () => {
@@ -15,7 +16,7 @@ const useCustomClass = () => {
   const [classes, setClasses] = useState(defaultClasses);
   useEffect(() => {
     setClasses({
-       title4: {
+      title4: {
         [theme.breakpoints.down("md")]: {
           fontSize: "20px",
         },
@@ -30,7 +31,12 @@ const useCustomClass = () => {
         [theme.breakpoints.down("sm")]: {
           fontSize: "14px",
         },
-      },     
+      },
+      button: {
+        color: "white",
+        justifyContent: "center",
+        alignItems: "center",
+      },
       subContainer: {
         px: 2,
         backgroundColor: "background.light",
@@ -39,12 +45,11 @@ const useCustomClass = () => {
         [theme.breakpoints.down("md")]: {
           gap: 2,
         },
-      },     
+      },
       title1: {
         color: "white",
         fontSize: "18px",
         fontWeight: 500,
-      
       },
       title2: {
         fontSize: "16px",
@@ -68,7 +73,6 @@ const useCustomClass = () => {
           fontSize: "15px",
         },
       },
-      
     });
   }, []);
   return classes;
