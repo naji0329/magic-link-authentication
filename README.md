@@ -28,3 +28,10 @@ REACT_APP_SEED = "write your seed phrase which you will use in this project"
 If you want to test with phantom wallet, install extension in your browser.
 This APP will automatically detect extensions and will let you connect the app with phantom
 If not, then let you signin with email
+
+# after install
+
+Go to [https://faucet.solana.com/] and input your wallet address and set the amount to airdrop and confirm.
+
+With out dev sol, you can't test the project. Because it requires fee to check in
+![alt text](image-2.png)
