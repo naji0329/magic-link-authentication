@@ -25,11 +25,14 @@ import {
   getLastTime,
   showWalletUI,
 } from "../actions/auth";
-import useCustomClass from "../class/useCustomClasses";
+
 import { getProvider } from "../utils/phantom";
 import { getAddress16 } from "../utils/address";
+import useBalance from "../hooks/useBalance";
+import { toast } from "react-toastify";
+import { Outlet } from "react-router-dom";
 
-const MainLayout = ({}) => {
+const MainLayout = () => {
   const theme = useTheme();
   const [popOpen, setPopOpen] = useState(false);
   const anchor = useRef(null);
@@ -41,7 +44,9 @@ const MainLayout = ({}) => {
 
   const [email, setEmail] = useState("");
   const [isPhantomInstalled, setIsPhantomInstalled] = useState(null);
-  const classes = useCustomClass();
+
+  const balance = useBalance();
+
   useEffect(() => {
     const provider = getProvider();
     if (provider) {
@@ -68,7 +73,7 @@ const MainLayout = ({}) => {
         marginTop={"42px"}
         alignItems={"center"}
         flexDirection={"row"}
-        justifyContent={"space-between"}
+        justifyContent={"flex-end"}
         paddingX={"60px"}
         paddingBottom={5}
         sx={{
@@ -85,7 +90,42 @@ const MainLayout = ({}) => {
           gap={6}
         >
           {auth.isAuthenticated === true ? (
-            <Stack flexDirection={"row"} alignItems={"center"} gap={2}>
+            <Stack flexDirection={"row"} alignItems={"center"}>
+              <Stack flexDirection={"row"} alignItems={"center"} mr={5}>
+                <Stack
+                  sx={{
+                    color: "white",
+                  }}
+                  flexDirection={"row"}
+                  gap={2}
+                  mx={2}
+                >
+                  <Box>LastTime:</Box>
+                  {auth.lastTime && (
+                    <Box mx={1}>
+                      {new Date(Number(auth.lastTime) * 1000).toLocaleString()}
+                    </Box>
+                  )}
+                </Stack>
+                <Stack>
+                  <Button
+                    sx={{
+                      ...btnClasses.buttonPrimary,
+                      paddingY: "2px",
+                    }}
+                    variant="outlined"
+                    onClick={() => {
+                      if (balance === 0) {
+                        toast.error(
+                          "You don't have any sol to execute the tx. https://faucet.solana.com/ You can get faucet here!"
+                        );
+                      } else dispatch(checkEntry(provider, auth.walletAddress));
+                    }}
+                  >
+                    Check-In
+                  </Button>
+                </Stack>
+              </Stack>
               <IconButton
                 onClick={() => {
                   dispatch(showWalletUI());
@@ -96,6 +136,24 @@ const MainLayout = ({}) => {
                   style={{ color: "white" }}
                 />
               </IconButton>
+              <Stack
+                sx={{
+                  color: "white",
+                  fontFamily: "Roboto",
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
+                flexDirection={"row"}
+                alignItems={"center"}
+                gap={0.5}
+                onClick={() => {
+                  unsecuredCopyToClipboard(auth.walletAddress);
+                }}
+              >
+                {getAddress16(auth.walletAddress)} ({balance} sol)
+                {auth.email && <Box mx={1}>{auth.email}</Box>}
+              </Stack>
               <IconButton
                 onClick={() => {
                   setPopOpen(true);
@@ -122,7 +180,13 @@ const MainLayout = ({}) => {
                   horizontal: "left",
                 }}
               >
-                <Stack paddingX={2} paddingTop={2} gap={1} width={"120px"}>
+                <Stack
+                  paddingX={2}
+                  width={"120px"}
+                  sx={{
+                    backgroundColor: "background.secondary",
+                  }}
+                >
                   <Button
                     onClick={() => {
                       dispatch(disconnectWallet());
@@ -133,60 +197,11 @@ const MainLayout = ({}) => {
                   </Button>
                 </Stack>
               </Popover>
-              <Stack
-                sx={{
-                  color: "white",
-                  fontFamily: "Roboto",
-                  "&:hover": {
-                    cursor: "pointer",
-                  },
-                }}
-                flexDirection={"row"}
-                alignItems={"center"}
-                gap={0.5}
-                onClick={() => {
-                  unsecuredCopyToClipboard(auth.walletAddress);
-                }}
-              >
-                {getAddress16(auth.walletAddress)}
-                {auth.email && <Box mx={1}>{auth.email}</Box>}
-                <Stack
-                  sx={{
-                    color: "white",
-                  }}
-                  flexDirection={"row"}
-                  gap={2}
-                  mx={2}
-                >
-                  <Box>LastTime:</Box>
-                  {auth.lastTime && (
-                    <Box mx={1}>
-                      {new Date(Number(auth.lastTime) * 1000).toLocaleString()}
-                    </Box>
-                  )}
-                </Stack>
-                <Stack>
-                  <Button
-                    sx={classes.button}
-                    variant="outlined"
-                    onClick={() => {
-                      dispatch(checkEntry(provider, auth.walletAddress));
-                    }}
-                  >
-                    Update
-                  </Button>
-                </Stack>
-              </Stack>
             </Stack>
           ) : (
             <Button
               sx={{
                 ...btnClasses.buttonPrimary,
-                backgroundColor: "#287693",
-                fontSize: "18px",
-                [theme.breakpoints.down(640)]: {
-                  display: "none",
-                },
               }}
               onClick={() => {
                 const provider = getProvider();
@@ -209,7 +224,6 @@ const MainLayout = ({}) => {
         >
           <Box
             sx={{
-              ...classes.subContainer,
               padding: "20px",
               position: "fixed",
               top: "50%",
@@ -241,6 +255,7 @@ const MainLayout = ({}) => {
           </Box>
         </Modal>
       </Stack>
+      <Outlet />
     </>
   );
 };

@@ -1,14 +1,13 @@
-export const typoClasses = {
-  navTitile: {
+const typoClasses = {
+  text: {
     color: "white",
-    fontSize: "24px",
-    fontWeight: "700",
-    fontFamily: "Raleway",
-  },
-  navTitleGreen: {
-    color: "#0fae96",
-    fontSize: "24px",
-    fontWeight: "700",
-    fontFamily: "Raleway",
+    fontSize: {
+      xs: "16px",
+      sm: "18px",
+      md: "20px",
+      lg: "30px",
+    },
   },
 };
+
+export default typoClasses;

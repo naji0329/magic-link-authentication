@@ -13,16 +13,16 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setMetadata: (state, action) => {
-      state.metadata = action.payload
+      state.metadata = action.payload;
     },
     setEmail: (state, action) => {
-      state.email = action.payload
+      state.email = action.payload;
     },
     setWalletAddress: (state, action) => {
       state.walletAddress = action.payload;
     },
     setLastTime: (state, action) => {
-      state.lastTime = action.payload
+      state.lastTime = action.payload;
     },
     login: (state, action) => {
       state.isAuthenticated = true;
@@ -30,11 +30,18 @@ export const authSlice = createSlice({
     logout: (state, action) => {
       state.isAuthenticated = false;
       state.walletAddress = null;
+      state.email = null;
     },
   },
 });
 
-export const { login, logout, setWalletAddress, setLastTime, setMetadata, setEmail } =
-  authSlice.actions;
+export const {
+  login,
+  logout,
+  setWalletAddress,
+  setLastTime,
+  setMetadata,
+  setEmail,
+} = authSlice.actions;
 
 export default authSlice.reducer;

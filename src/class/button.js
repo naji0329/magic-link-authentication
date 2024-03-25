@@ -1,7 +1,6 @@
 export const btnClasses = {
   buttonPrimary: {
     fontFamily: "Livvic",
-    backgroundColor: "background.stone",
     borderRadius: "10px",
     padding: "9px",
     paddingX: "30px",
@@ -10,5 +9,7 @@ export const btnClasses = {
     "&:hover": {
       background: "#17377f99",
     },
+    backgroundColor: "#287693",
+    fontSize: "18px",
   },
 };
