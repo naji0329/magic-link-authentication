@@ -1,7 +1,7 @@
-const typoClasses = {
+export const typoClasses = {
   text: {
     color: "white",
-    fontSize: {
+    "fontSize": {
       xs: "16px",
       sm: "18px",
       md: "20px",
@@ -9,5 +9,3 @@ const typoClasses = {
     },
   },
 };
-
-export default typoClasses;

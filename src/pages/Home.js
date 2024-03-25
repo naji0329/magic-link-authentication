@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import { useSelector } from "react-redux";
 import useBalance from "../hooks/useBalance";
-import typoClasses from "../class/typo";
+import {typoClasses} from "../class/text";
 export const Home = () => {
   const auth = useSelector((state) => state.auth);
   const balance = useBalance();
