@@ -24,7 +24,7 @@ export const Home = () => {
 
           <Stack>Balance : {balance}</Stack>
 
-          <Stack>Last Time: {auth.lastTime || "Unset"}</Stack>
+          <Stack>Last Time Stamp: {auth.lastTime || "Unset"}</Stack>
         </Stack>
       </Stack>
     </>

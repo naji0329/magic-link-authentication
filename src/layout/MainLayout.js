@@ -107,7 +107,7 @@ const MainLayout = () => {
                     </Box>
                   )}
                 </Stack>
-                <Stack>
+                <Stack flexDirection={"row"} gap={2}>
                   <Button
                     sx={{
                       ...btnClasses.buttonPrimary,
@@ -123,6 +123,18 @@ const MainLayout = () => {
                     }}
                   >
                     Check-In
+                  </Button>
+                  <Button
+                    sx={{
+                      ...btnClasses.buttonPrimary,
+                      paddingY: "2px",
+                    }}
+                    variant="outlined"
+                    onClick={() => {
+                    dispatch(getLastTime(provider,auth.walletAddress))
+                    }}
+                  >
+                    Get LastTime
                   </Button>
                 </Stack>
               </Stack>

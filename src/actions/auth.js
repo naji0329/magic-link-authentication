@@ -149,21 +149,24 @@ export const checkEntry = (provider, address) => async (dispatch) => {
     const privateKey = generatePrivateKeyFromPublicAddress(address);
 
     const baseAccount = web3.Keypair.fromSeed(privateKey);
-    await program.rpc.checkIn({
+    program.rpc.checkIn({
       accounts: {
         checkInAccount: baseAccount.publicKey,
         user: new PublicKey(address),
         systemProgram: web3.SystemProgram.programId,
       },
       signers: [baseAccount],
-    });
+    }).then((res)=>{
+      
 
-    const res = await program.account.checkInAccount.fetch(
-      baseAccount.publicKey
-    );
-
-    toast.success("Transaction has been excuted successfully");
-    dispatch(setLastTime(res.lastCheckIn.toString()));
+      // to get udpated tx, we need to wait for around 1s
+      setTimeout(()=>{dispatch(getLastTime(provider,address))},[5000])
+      
+      toast.success("Transaction has been excuted successfully, You need to wait for around 5s to see updates");
+    }).catch((err)=>{
+      toast.error("Users rejected the tx")
+    });    
+    
   } catch (err) {
     console.log(err);
   }
@@ -181,6 +184,7 @@ export const getLastTime = (provider, address) => async (dispatch) => {
     const res = await program.account.checkInAccount.fetch(
       baseAccount.publicKey
     );
+    console.log("res:",res.lastCheckIn.toString());
     dispatch(setLastTime(res.lastCheckIn.toString()));
   } catch (err) {
     console.log("error", err);
